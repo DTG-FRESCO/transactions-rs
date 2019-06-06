@@ -6,6 +6,9 @@ use std::{
 };
 
 use hashlike::HashLike;
+#[cfg(feature = "multikey")]
+use multikeymap::MultiKeyMap;
+
 pub mod commit_behavior {
     mod sealed {
         use super::*;
@@ -162,6 +165,34 @@ where
             } else {
                 self.inner.get(index).unwrap()
             }
+        }
+    }
+}
+
+#[cfg(feature = "multikey")]
+impl<K, SK, V> HashWrap<'_, K, V, MultiKeyMap<K, SK, V>>
+where
+    K: Eq + Hash + Clone,
+    for<'b> &'b K: IntoIterator<Item = &'b SK>,
+    SK: Eq + Hash + Clone,
+    V: Clone,
+{
+    pub fn keys_containing(&self, k: &SK) -> Option<impl Iterator<Item = &K>> {
+        let i_keys = self.inner.keys_containing(k).map(|i| i.collect::<Vec<_>>());
+        if let Some(mut inner) = i_keys {
+            for k in &self.removed {
+                inner.remove_item(&k);
+            }
+            for (ak, _v) in &self.added {
+                for sk in ak {
+                    if sk == k && !inner.contains(&ak) {
+                        inner.push(ak);
+                    }
+                }
+            }
+            Some(inner.into_iter())
+        } else {
+            None
         }
     }
 }

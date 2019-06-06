@@ -6,7 +6,9 @@ edition = "2018"
 
 [dependencies]
 lending-library = {version = "0.2.*", optional = true}
+multikeymap = { git = "https://github.com/DTG-FRESCO/multikeymap-rs.git", optional = true }
 hashlike = { git = "https://github.com/DTG-FRESCO/hashlike-rs.git" }
 
 [features]
 lending = ["lending-library"]
+multikey = ["multikeymap"]
