@@ -1,15 +1,10 @@
-use std::{
-    collections::{HashMap, HashSet},
-    hash::Hash,
-    marker::PhantomData,
-    ops::Index,
-};
+use std::{collections::HashSet, hash::Hash};
 
 use lending_library::{LendingLibrary, Loan};
 
 pub struct LendingWrap<'a, K, V>
-    where
-        K: Eq + Hash,
+where
+    K: Eq + Hash,
 {
     inner: &'a mut LendingLibrary<K, V>,
     added: LendingLibrary<K, V>,
@@ -17,9 +12,9 @@ pub struct LendingWrap<'a, K, V>
 }
 
 impl<'a, K, V> LendingWrap<'a, K, V>
-    where
-        K: Eq + Hash + Clone,
-        V: Clone,
+where
+    K: Eq + Hash + Clone,
+    V: Clone,
 {
     pub fn new(lib: &'a mut LendingLibrary<K, V>) -> Self {
         LendingWrap {
@@ -35,6 +30,8 @@ impl<'a, K, V> LendingWrap<'a, K, V>
         }
         self.inner.extend(self.added);
     }
+
+    pub fn rollback(self) {}
 
     pub fn insert(&mut self, k: K, v: V) -> Option<V> {
         if self.added.contains_key(&k) {
