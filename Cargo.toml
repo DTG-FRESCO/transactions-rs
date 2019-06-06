@@ -6,6 +6,7 @@ edition = "2018"
 
 [dependencies]
 lending-library = {version = "0.2.*", optional = true}
+hashlike = { git = "https://github.com/DTG-FRESCO/hashlike-rs.git" }
 
 [features]
 lending = ["lending-library"]
